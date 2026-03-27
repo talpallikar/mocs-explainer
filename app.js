@@ -142,106 +142,129 @@ function renderOverview(el) {
     <section>
       <h2>The Qualification Tree</h2>
       <div class="diagram">
-        <!-- Tier 5: Worlds -->
-        <div class="diagram-tier">
-          <div class="diagram-node node-worlds" data-goto="showcase" data-scroll="champions-showcase">
-            <span class="node-icon">&#127942;</span>
-            <div class="node-title">World Championship</div>
-            <div class="node-sub">Top 2 from each Showcase</div>
+        <!-- Tier 0: Regular play -->
+        <div class="diagram-col">
+          <div class="diagram-tier">
+            <div class="diagram-node node-play" data-goto="earning-qps">
+              <span class="node-icon">&#127183;</span>
+              <div class="node-title">Leagues &amp; Drafts</div>
+              <div class="node-sub">Earn 1&ndash;5 QPs per event</div>
+              <span class="node-badge" style="background:var(--tier-play)">Daily play</span>
+            </div>
           </div>
         </div>
 
-        <div class="connector-vertical"><div class="vline"></div></div>
-
-        <!-- Tier 4: Champions Showcase -->
-        <div class="diagram-tier">
-          <div class="diagram-node node-final" data-goto="showcase" data-scroll="champions-showcase">
-            <span class="node-icon">&#9733;</span>
-            <div class="node-title">Champions Showcase</div>
-            <div class="node-sub">8 players &middot; $50K prize pool</div>
-            <span class="node-badge" style="background:var(--tier-final)">Season Final</span>
-          </div>
+        <div class="diagram-connector">
+          <div class="connector-line"></div>
+          <div class="arrow-label">Earn QPs</div>
         </div>
-
-        <div class="connector-vertical"><div class="vline"></div></div>
-        <div class="arrow-label">4 + 2 + 2 = 8 players</div>
-
-        <!-- Tier 3: Three paths to Showcase -->
-        <div class="diagram-tier">
-          <div class="diagram-node node-showcase" data-goto="showcase" data-scroll="showcase-qualifiers">
-            <span class="node-icon">&#127941;</span>
-            <div class="node-title">Showcase Qualifiers</div>
-            <div class="node-sub">4 winners advance</div>
-            <span class="node-badge" style="background:var(--tier-showcase)">Token entry</span>
-          </div>
-          <div class="diagram-node node-showcase" data-goto="showcase" data-scroll="showcase-opens">
-            <span class="node-icon">&#127922;</span>
-            <div class="node-title">Showcase Opens</div>
-            <div class="node-sub">2 winners advance</div>
-            <span class="node-badge" style="background:var(--tier-showcase)">Open entry</span>
-          </div>
-          <div class="diagram-node node-showcase" data-goto="showcase" data-scroll="leaderboard">
-            <span class="node-icon">&#128200;</span>
-            <div class="node-title">Leaderboard</div>
-            <div class="node-sub">Top 2 advance</div>
-            <span class="node-badge" style="background:var(--tier-showcase)">Season-long</span>
-          </div>
-        </div>
-
-        <div class="connector-vertical"><div class="vline"></div></div>
-        <div class="arrow-label">Top 8 earn tokens &middot; 5-0 earns token</div>
-
-        <!-- Tier 2: Showcase Challenges / LCEs + Quals -->
-        <div class="diagram-tier">
-          <div class="diagram-node node-qual" data-goto="showcase" data-scroll="showcase-challenges">
-            <span class="node-icon">&#9878;</span>
-            <div class="node-title">Showcase Challenges</div>
-            <div class="node-sub">Top 8 &rarr; token</div>
-            <span class="node-badge" style="background:var(--tier-qual)">40 QPs</span>
-          </div>
-          <div class="diagram-node node-qual" data-goto="showcase" data-scroll="last-chance">
-            <span class="node-icon">&#9888;</span>
-            <div class="node-title">Last Chance Events</div>
-            <div class="node-sub">5-0 &rarr; token</div>
-            <span class="node-badge" style="background:var(--tier-qual)">40 QPs + 30 Tix</span>
-          </div>
-          <div class="diagram-node node-qual" data-goto="quals">
-            <span class="node-icon">&#127919;</span>
-            <div class="node-title">Quals &amp; Supers</div>
-            <div class="node-sub">Top 2/4 &rarr; RCs</div>
-            <span class="node-badge" style="background:var(--tier-qual)">40 QPs</span>
-          </div>
-        </div>
-
-        <div class="connector-vertical"><div class="vline"></div></div>
-        <div class="arrow-label">Accumulate 40 Qualifier Points</div>
 
         <!-- Tier 1: Prelims & Challenges -->
-        <div class="diagram-tier">
-          <div class="diagram-node node-prelim" data-goto="prelims">
-            <span class="node-icon">&#128221;</span>
-            <div class="node-title">Preliminaries</div>
-            <div class="node-sub">4-0 = 40 QPs</div>
-            <span class="node-badge" style="background:var(--tier-prelim)">20 Tix</span>
-          </div>
-          <div class="diagram-node node-prelim" data-goto="prelims">
-            <span class="node-icon">&#9876;</span>
-            <div class="node-title">Format Challenges</div>
-            <div class="node-sub">1st = 50 QPs</div>
-            <span class="node-badge" style="background:var(--tier-prelim)">25-30 Tix</span>
+        <div class="diagram-col">
+          <div class="diagram-tier">
+            <div class="diagram-node node-prelim" data-goto="prelims">
+              <span class="node-icon">&#128221;</span>
+              <div class="node-title">Preliminaries</div>
+              <div class="node-sub">4-0 = 40 QPs</div>
+              <span class="node-badge" style="background:var(--tier-prelim)">20 Tix</span>
+            </div>
+            <div class="diagram-node node-prelim" data-goto="prelims">
+              <span class="node-icon">&#9876;</span>
+              <div class="node-title">Format Challenges</div>
+              <div class="node-sub">1st = 50 QPs</div>
+              <span class="node-badge" style="background:var(--tier-prelim)">25-30 Tix</span>
+            </div>
           </div>
         </div>
 
-        <div class="connector-vertical"><div class="vline"></div></div>
-        <div class="arrow-label">Earn QPs from daily play</div>
+        <div class="diagram-connector">
+          <div class="connector-line"></div>
+          <div class="arrow-label">40 QPs</div>
+        </div>
 
-        <!-- Tier 0: Regular play -->
-        <div class="diagram-tier">
-          <div class="diagram-node node-play" data-goto="earning-qps">
-            <span class="node-icon">&#127183;</span>
-            <div class="node-title">Leagues &amp; Drafts</div>
-            <div class="node-sub">Earn 1&ndash;5 QPs per event</div>
-            <span class="node-badge" style="background:var(--tier-play)">Daily play</span>
+        <!-- Tier 2: Showcase Challenges / LCEs + Quals -->
+        <div class="diagram-col">
+          <div class="diagram-tier">
+            <div class="diagram-node node-qual" data-goto="showcase" data-scroll="showcase-challenges">
+              <span class="node-icon">&#9878;</span>
+              <div class="node-title">Showcase Challenges</div>
+              <div class="node-sub">Top 8 &rarr; token</div>
+              <span class="node-badge" style="background:var(--tier-qual)">40 QPs</span>
+            </div>
+            <div class="diagram-node node-qual" data-goto="showcase" data-scroll="last-chance">
+              <span class="node-icon">&#9888;</span>
+              <div class="node-title">Last Chance Events</div>
+              <div class="node-sub">5-0 &rarr; token</div>
+              <span class="node-badge" style="background:var(--tier-qual)">40 QPs + 30 Tix</span>
+            </div>
+            <div class="diagram-node node-qual" data-goto="quals">
+              <span class="node-icon">&#127919;</span>
+              <div class="node-title">Quals &amp; Supers</div>
+              <div class="node-sub">Top 2/4 &rarr; RCs</div>
+              <span class="node-badge" style="background:var(--tier-qual)">40 QPs</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="diagram-connector">
+          <div class="connector-line"></div>
+          <div class="arrow-label">Tokens &middot; LB Pts</div>
+        </div>
+
+        <!-- Tier 3: Three paths to Showcase -->
+        <div class="diagram-col">
+          <div class="diagram-tier">
+            <div class="diagram-node node-showcase" data-goto="showcase" data-scroll="showcase-qualifiers">
+              <span class="node-icon">&#127941;</span>
+              <div class="node-title">Showcase Qualifiers</div>
+              <div class="node-sub">4 winners advance</div>
+              <span class="node-badge" style="background:var(--tier-showcase)">Token entry</span>
+            </div>
+            <div class="diagram-node node-showcase" data-goto="showcase" data-scroll="showcase-opens">
+              <span class="node-icon">&#127922;</span>
+              <div class="node-title">Showcase Opens</div>
+              <div class="node-sub">2 winners advance</div>
+              <span class="node-badge" style="background:var(--tier-showcase)">Open entry</span>
+            </div>
+            <div class="diagram-node node-showcase" data-goto="showcase" data-scroll="leaderboard">
+              <span class="node-icon">&#128200;</span>
+              <div class="node-title">Leaderboard</div>
+              <div class="node-sub">Top 2 advance</div>
+              <span class="node-badge" style="background:var(--tier-showcase)">Season-long</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="diagram-connector">
+          <div class="connector-line"></div>
+          <div class="arrow-label">4 + 2 + 2</div>
+        </div>
+
+        <!-- Tier 4: Champions Showcase -->
+        <div class="diagram-col">
+          <div class="diagram-tier">
+            <div class="diagram-node node-final" data-goto="showcase" data-scroll="champions-showcase">
+              <span class="node-icon">&#9733;</span>
+              <div class="node-title">Champions Showcase</div>
+              <div class="node-sub">8 players &middot; $50K prize pool</div>
+              <span class="node-badge" style="background:var(--tier-final)">Season Final</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="diagram-connector">
+          <div class="connector-line"></div>
+          <div class="arrow-label">Top 2</div>
+        </div>
+
+        <!-- Tier 5: Worlds -->
+        <div class="diagram-col">
+          <div class="diagram-tier">
+            <div class="diagram-node node-worlds" data-goto="showcase" data-scroll="champions-showcase">
+              <span class="node-icon">&#127942;</span>
+              <div class="node-title">World Championship</div>
+              <div class="node-sub">Top 2 from each Showcase</div>
+            </div>
           </div>
         </div>
       </div>
