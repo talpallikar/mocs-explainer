@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MTGO MOCS Explainer</title>
+  <meta name="description" content="A visual guide to the Magic Online Championship Series qualification system, updated daily.">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+</head>
+<body>
+  <header>
+    <div class="header-row">
+      <div class="header-left">
+        <h1><a href="./">MTGO MOCS Explainer</a></h1>
+        <div id="season-badge" class="season-badge"></div>
+      </div>
+      <div class="header-right">
+        <select id="season-select" aria-label="Select season"></select>
+        <button id="theme-toggle" aria-label="Toggle theme">&#9684;</button>
+      </div>
+    </div>
+    <nav id="main-nav">
+      <button class="tab active" data-view="overview">Overview</button>
+      <button class="tab" data-view="earning-qps">Earning QPs</button>
+      <button class="tab" data-view="prelims">Prelims &amp; Challenges</button>
+      <button class="tab" data-view="quals">Quals &amp; Supers</button>
+      <button class="tab" data-view="showcase">Showcase Path</button>
+      <button class="tab" data-view="season">Season Info</button>
+    </nav>
+  </header>
+
+  <main id="main-content"></main>
+
+  <footer>
+    <p>Data sourced from <a href="https://www.mtgo.com/premier-play">mtgo.com</a>. Updated daily. <a href="https://github.com/talpallikar/mocs-explainer">Source on GitHub</a></p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
