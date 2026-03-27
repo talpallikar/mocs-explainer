@@ -623,6 +623,71 @@ h3.subsection {
 
 .archive-banner strong { color: var(--text); }
 
+/* ---------- Format event cards ---------- */
+.event-card-header,
+.event-card-row {
+  display: grid;
+  grid-template-columns: 100px 80px 1fr 90px;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.82rem;
+}
+
+.event-card-header {
+  border-bottom: 2px solid var(--border);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.event-card-row {
+  border-bottom: 1px solid var(--border);
+}
+
+.event-card-row:hover {
+  background: var(--row-hover);
+}
+
+.event-card-row.past-event {
+  opacity: 0.5;
+}
+
+.event-card-time {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+}
+
+.event-status {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  text-align: center;
+}
+
+.status-past {
+  background: var(--bar-bg);
+  color: var(--muted);
+}
+
+.status-upcoming {
+  background: var(--accent);
+  color: #fff;
+}
+
+.status-live {
+  background: var(--tier-final);
+  color: #fff;
+}
+
+tr.past-event td {
+  opacity: 0.5;
+}
+
 /* ---------- Footer ---------- */
 footer {
   max-width: 960px;

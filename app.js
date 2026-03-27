@@ -27,14 +27,45 @@ seasonSelect.addEventListener('change', () => {
 });
 
 // ---------- Tabs ----------
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelector('.tab.active').classList.remove('active');
-    btn.classList.add('active');
-    activeView = btn.dataset.view;
-    render();
+const nav = document.getElementById('main-nav');
+
+function buildTabs() {
+  const s = activeSeason;
+  const coreTabs = [
+    { view: 'overview', label: 'Overview' },
+    { view: 'earning-qps', label: 'Earning QPs' },
+    { view: 'prelims', label: 'Prelims & Challenges' },
+    { view: 'quals', label: 'Quals & Supers' },
+    { view: 'showcase', label: 'Showcase Path' },
+  ];
+  const formatTabs = s.showcaseFormats.map(f => ({
+    view: 'format-' + f.toLowerCase(),
+    label: f,
+    format: f,
+  }));
+  const tailTabs = [
+    { view: 'season', label: 'Season Info' },
+  ];
+  const allTabs = [...coreTabs, ...formatTabs, ...tailTabs];
+
+  // If activeView is a format tab that no longer exists, reset
+  if (activeView.startsWith('format-') && !allTabs.find(t => t.view === activeView)) {
+    activeView = 'overview';
+  }
+
+  nav.innerHTML = allTabs.map(t =>
+    `<button class="tab${t.view === activeView ? ' active' : ''}" data-view="${t.view}">${t.label}</button>`
+  ).join('');
+
+  nav.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      nav.querySelector('.tab.active').classList.remove('active');
+      btn.classList.add('active');
+      activeView = btn.dataset.view;
+      render();
+    });
   });
-});
+}
 
 // ---------- Helpers ----------
 function fmtDate(iso) {
@@ -67,6 +98,8 @@ function daysLeft(season) {
 const main = document.getElementById('main-content');
 
 function render() {
+  buildTabs();
+
   // Update season badge
   const badge = document.getElementById('season-badge');
   if (activeSeason.current) {
@@ -93,7 +126,14 @@ function render() {
   main.innerHTML = archiveBanner;
 
   const content = document.createElement('div');
-  views[activeView](content);
+
+  if (activeView.startsWith('format-')) {
+    const fmt = activeView.replace('format-', '');
+    const formatName = activeSeason.showcaseFormats.find(f => f.toLowerCase() === fmt) || fmt;
+    renderFormat(content, formatName);
+  } else {
+    views[activeView](content);
+  }
   main.appendChild(content);
 }
 
@@ -628,7 +668,7 @@ function renderShowcase(el) {
       <h2>Backup: Last Chance Events</h2>
       <div class="info-card">
         <div class="entry-line">Entry: 40 QPs + 30 Tix / 300 PP &middot; 16&ndash;672 players &middot; 5-round Swiss</div>
-        <div class="entry-line">End of season &middot; 4 events (one per format)${s.lastChanceDates.length ? ' &middot; ' + s.lastChanceDates.map(shortDate).join(', ') : ''}</div>
+        <div class="entry-line">End of season &middot; Multiple events across all formats</div>
         <table class="prize-table">
           <thead><tr><th>Record</th><th>PP</th><th>Token</th></tr></thead>
           <tbody>
@@ -644,7 +684,7 @@ function renderShowcase(el) {
       <h2>Step 2: Showcase Qualifiers</h2>
       <div class="info-card">
         <div class="entry-line">Entry: Format Championship Token &middot; 8&ndash;64 players &middot; Swiss + Top 8</div>
-        <div class="entry-line">4 per season (one per format)${s.showcaseQualifierDates.length ? ' &middot; ' + s.showcaseQualifierDates.map(shortDate).join(', ') : ''}</div>
+        <div class="entry-line">4 per season (one per format)</div>
         <p><strong>Winner earns Champions Showcase + Pro Tour + Regional Championship invitations.</strong></p>
         <table class="prize-table">
           <thead><tr><th>Finish</th><th>PP</th><th>Chests</th><th>LB Pts</th><th>Invitations</th></tr></thead>
@@ -663,7 +703,7 @@ function renderShowcase(el) {
       <h2>Alternate: Showcase Opens</h2>
       <div class="info-card">
         <div class="entry-line">Entry: 40 Tix / 400 PP (no QPs needed!) &middot; 33&ndash;672 players &middot; Sealed + Top 8 Draft</div>
-        <div class="entry-line">2 per season${s.showcaseOpenDates.length ? ' &middot; ' + s.showcaseOpenDates.map(shortDate).join(', ') : ''}</div>
+        <div class="entry-line">2 per season (Sealed format)</div>
         <p><strong>Winner earns Champions Showcase + Pro Tour + Regional Championship invitations.</strong></p>
         <table class="prize-table">
           <thead><tr><th>Finish</th><th>PP</th><th>Chests</th><th>LB Pts</th><th>Invitations</th></tr></thead>
@@ -775,9 +815,20 @@ function renderSeasonInfo(el) {
           <thead><tr><th>Event</th><th>Dates</th></tr></thead>
           <tbody>
             <tr><td>Season window</td><td>${fmtDate(s.start)} &ndash; ${fmtDate(s.end)}</td></tr>
-            ${s.lastChanceDates.length ? `<tr><td>Last Chance Events</td><td>${s.lastChanceDates.map(shortDate).join(', ')}</td></tr>` : ''}
-            ${s.showcaseQualifierDates.length ? `<tr><td>Showcase Qualifiers</td><td>${s.showcaseQualifierDates.map(shortDate).join(', ')}</td></tr>` : ''}
-            ${s.showcaseOpenDates.length ? `<tr><td>Showcase Opens</td><td>${s.showcaseOpenDates.map(shortDate).join(', ')}</td></tr>` : ''}
+            ${(() => {
+              const byType = {};
+              (s.events || []).forEach(e => {
+                if (!byType[e.type]) byType[e.type] = new Set();
+                byType[e.type].add(e.date);
+              });
+              return Object.entries(byType).map(([type, dates]) => {
+                const sorted = [...dates].sort();
+                const display = sorted.length > 4
+                  ? shortDate(sorted[0]) + ' &ndash; ' + shortDate(sorted[sorted.length - 1])
+                  : sorted.map(shortDate).join(', ');
+                return '<tr><td>' + type + '</td><td>' + display + '</td></tr>';
+              }).join('');
+            })()}
           </tbody>
         </table>
       </div>
@@ -826,6 +877,172 @@ function renderSeasonInfo(el) {
           <li>Minimum age 18 for Champions Showcase participation</li>
           <li>If a Leaderboard invitee already holds a Pro Tour invitation, that invite passes down</li>
         </ul>
+      </div>
+    </section>
+  `;
+}
+
+// ---------- FORMAT PAGE ----------
+function renderFormat(el, formatName) {
+  const s = activeSeason;
+  const events = (s.events || []).filter(e => e.format === formatName);
+  const isShowcaseFormat = s.showcaseFormats.includes(formatName);
+
+  // Group events by type
+  const showcaseChallenges = events.filter(e => e.type === 'Showcase Challenge');
+  const lces = events.filter(e => e.type === 'Last Chance Event');
+  const showcaseQuals = events.filter(e => e.type === 'Showcase Qualifier');
+  const quals = events.filter(e => e.type === 'Qualifier');
+  const superQuals = events.filter(e => e.type === 'Super Qualifier');
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  function eventRow(e) {
+    const isPast = e.date < today;
+    const cls = isPast ? ' class="past-event"' : '';
+    return `<tr${cls}>
+      <td>${shortDate(e.date)}</td>
+      <td>${e.time} UTC</td>
+      <td>${e.type}</td>
+    </tr>`;
+  }
+
+  function statusBadge(e) {
+    if (e.date < today) return '<span class="event-status status-past">Completed</span>';
+    if (e.date === today) return '<span class="event-status status-live">Today</span>';
+    return '<span class="event-status status-upcoming">Upcoming</span>';
+  }
+
+  function eventCard(e) {
+    const isPast = e.date < today;
+    return `<div class="event-card-row${isPast ? ' past-event' : ''}">
+      <div class="event-card-date">${shortDate(e.date)}</div>
+      <div class="event-card-time">${e.time} UTC</div>
+      <div class="event-card-type">${e.type}</div>
+      ${statusBadge(e)}
+    </div>`;
+  }
+
+  el.innerHTML = `
+    <section>
+      <h2>${formatName}</h2>
+      <p class="intro">${formatName} qualifying events for ${s.label}.${isShowcaseFormat ? ` ${formatName} is a Showcase format this season.` : ''}</p>
+      ${isShowcaseFormat && s.rotatingFormat === formatName
+        ? '<div class="info-card callout"><strong>Rotating format:</strong> ' + formatName + ' is the rotating 4th Showcase format this season.</div>'
+        : ''}
+    </section>
+
+    <section>
+      <h2>All ${formatName} Events</h2>
+      ${events.length ? `
+        <div class="info-card">
+          <div class="event-card-header">
+            <div class="event-card-date"><strong>Date</strong></div>
+            <div class="event-card-time"><strong>Time</strong></div>
+            <div class="event-card-type"><strong>Event</strong></div>
+            <div><strong>Status</strong></div>
+          </div>
+          ${events.sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.time < b.time ? -1 : 1).map(eventCard).join('')}
+        </div>
+      ` : '<div class="info-card"><p style="color:var(--muted)">No events scheduled yet for this format.</p></div>'}
+    </section>
+
+    ${showcaseChallenges.length ? `
+    <section>
+      <h2>Showcase Challenges</h2>
+      <p class="intro">Top 8 earn a Format Championship Token for the ${formatName} Showcase Qualifier.</p>
+      <div class="info-card">
+        <div class="entry-line">Entry: 40 QPs &middot; 33&ndash;672 players &middot; Swiss + Top 8</div>
+        <table class="prize-table">
+          <thead><tr><th>Date</th><th>Time (UTC)</th><th>Status</th></tr></thead>
+          <tbody>
+            ${showcaseChallenges.map(e => `<tr${e.date < today ? ' class="past-event"' : ''}>
+              <td>${shortDate(e.date)}</td>
+              <td>${e.time}</td>
+              <td>${e.date < today ? 'Completed' : e.date === today ? 'Today' : 'Upcoming'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    ` : ''}
+
+    ${lces.length ? `
+    <section>
+      <h2>Last Chance Events</h2>
+      <p class="intro">5-0 earns a Format Championship Token. Multiple events run across several days.</p>
+      <div class="info-card">
+        <div class="entry-line">Entry: 40 QPs + 30 Tix / 300 PP &middot; 16&ndash;672 players &middot; 5-round Swiss</div>
+        <table class="prize-table">
+          <thead><tr><th>Date</th><th>Time (UTC)</th><th>Status</th></tr></thead>
+          <tbody>
+            ${lces.map(e => `<tr${e.date < today ? ' class="past-event"' : ''}>
+              <td>${shortDate(e.date)}</td>
+              <td>${e.time}</td>
+              <td>${e.date < today ? 'Completed' : e.date === today ? 'Today' : 'Upcoming'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    ` : ''}
+
+    ${showcaseQuals.length ? `
+    <section>
+      <h2>Showcase Qualifier</h2>
+      <p class="intro">Winner earns Champions Showcase + Pro Tour + Regional Championship invitations.</p>
+      <div class="info-card">
+        <div class="entry-line">Entry: ${formatName} Format Championship Token &middot; 8&ndash;64 players</div>
+        <table class="prize-table">
+          <thead><tr><th>Date</th><th>Time (UTC)</th><th>Status</th></tr></thead>
+          <tbody>
+            ${showcaseQuals.map(e => `<tr${e.date < today ? ' class="past-event"' : ''}>
+              <td>${shortDate(e.date)}</td>
+              <td>${e.time}</td>
+              <td>${e.date < today ? 'Completed' : e.date === today ? 'Today' : 'Upcoming'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    ` : ''}
+
+    ${(quals.length || superQuals.length) ? `
+    <section>
+      <h2>Qualifiers &amp; Super Qualifiers</h2>
+      <p class="intro">Top 2 (Qualifier) or Top 4 (Super Qualifier) earn Regional Championship invitations.</p>
+      <div class="info-card">
+        <table class="prize-table">
+          <thead><tr><th>Date</th><th>Time (UTC)</th><th>Type</th><th>Status</th></tr></thead>
+          <tbody>
+            ${[...quals, ...superQuals].sort((a, b) => a.date < b.date ? -1 : 1).map(e => `<tr${e.date < today ? ' class="past-event"' : ''}>
+              <td>${shortDate(e.date)}</td>
+              <td>${e.time}</td>
+              <td>${e.type}</td>
+              <td>${e.date < today ? 'Completed' : e.date === today ? 'Today' : 'Upcoming'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    ` : ''}
+
+    <section>
+      <h2>${formatName} Qualification Path</h2>
+      <div class="flow-horizontal">
+        ${isShowcaseFormat ? `
+          <div class="flow-step">Showcase Challenge<br><small>Top 8 &rarr; token</small></div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">Showcase Qualifier<br><small>Winner &rarr; Showcase</small></div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">Champions Showcase<br><small>$50K + Worlds</small></div>
+        ` : `
+          <div class="flow-step">Qualifier / Super Qualifier<br><small>Top 2/4 &rarr; RC invite</small></div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">Regional Championship</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">Pro Tour</div>
+        `}
       </div>
     </section>
   `;
