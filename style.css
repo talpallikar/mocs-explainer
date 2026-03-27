@@ -209,52 +209,28 @@ h2 {
 
 /* ---------- Qualification Diagram ---------- */
 .diagram {
-  display: flex;
-  align-items: stretch;
-  gap: 0;
+  position: relative;
   padding: 2rem 0;
-  overflow-x: auto;
-}
-
-.diagram-col {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
 }
 
 .diagram-tier {
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  gap: 0.6rem;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
 }
 
-.diagram-connector {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0 0.4rem;
-  flex-shrink: 0;
-}
-
-.diagram-connector .connector-line {
-  width: 32px;
-  height: 2px;
-  background: var(--connector);
-  position: relative;
-}
-
-.diagram-connector .connector-line::after {
-  content: '';
+.diagram-tier-label {
   position: absolute;
-  right: -4px;
-  top: -3px;
-  width: 0;
-  height: 0;
-  border-top: 4px solid transparent;
-  border-bottom: 4px solid transparent;
-  border-left: 6px solid var(--connector);
+  left: 0;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
 }
 
 .diagram-node {
@@ -346,16 +322,82 @@ h2 {
   fill: var(--connector);
 }
 
+/* Simple vertical connector */
+.connector-vertical {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+}
+
+.connector-vertical .vline {
+  width: 2px;
+  height: 32px;
+  background: var(--connector);
+  position: relative;
+}
+
+.connector-vertical .vline::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: -3px;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid var(--connector);
+}
+
 /* Arrow label */
 .arrow-label {
-  font-size: 0.6rem;
+  text-align: center;
+  font-size: 0.65rem;
   color: var(--muted);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  margin-top: 0.3rem;
-  white-space: nowrap;
-  text-align: center;
+  margin: 0.25rem 0;
+}
+
+/* Bracket connector for multiple nodes merging */
+.connector-bracket {
+  display: flex;
+  justify-content: center;
+  padding: 0.25rem 0;
+}
+
+.connector-bracket .bracket {
+  position: relative;
+  height: 28px;
+}
+
+.connector-bracket .bracket-top {
+  position: absolute;
+  top: 0;
+  border-top: 2px solid var(--connector);
+  height: 14px;
+}
+
+.connector-bracket .bracket-stem {
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  width: 2px;
+  height: 14px;
+  background: var(--connector);
+  transform: translateX(-50%);
+}
+
+.connector-bracket .bracket-stem::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: -3px;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid var(--connector);
 }
 
 /* ---------- Stats ---------- */
@@ -593,33 +635,8 @@ footer {
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 768px) {
-  .diagram {
-    flex-direction: column;
-    align-items: center;
-  }
-  .diagram-tier {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .diagram-connector {
-    padding: 0.3rem 0;
-  }
-  .diagram-connector .connector-line {
-    width: 2px;
-    height: 28px;
-  }
-  .diagram-connector .connector-line::after {
-    right: auto;
-    top: auto;
-    bottom: -4px;
-    left: -3px;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 6px solid var(--connector);
-    border-bottom: none;
-  }
+@media (max-width: 640px) {
+  .diagram-tier { gap: 0.5rem; }
   .diagram-node { min-width: 100px; max-width: 150px; padding: 0.5rem 0.6rem; }
   .diagram-node .node-title { font-size: 0.75rem; }
   .diagram-node .node-sub { font-size: 0.65rem; }
