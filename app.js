@@ -29,33 +29,49 @@ seasonSelect.addEventListener('change', () => {
 // ---------- Tabs ----------
 const nav = document.getElementById('main-nav');
 
+const FORMAT_COLORS = {
+  Modern: '#b45309',
+  Legacy: '#0369a1',
+  Standard: '#059669',
+  Vintage: '#7c3aed',
+  Pauper: '#7c3aed',
+  Pioneer: '#dc2626',
+  Limited: '#6b7280',
+};
+
 function buildTabs() {
   const s = activeSeason;
   const coreTabs = [
     { view: 'overview', label: 'Overview' },
-    { view: 'earning-qps', label: 'Earning QPs' },
-    { view: 'prelims', label: 'Prelims & Challenges' },
-    { view: 'quals', label: 'Quals & Supers' },
-    { view: 'showcase', label: 'Showcase Path' },
+    { view: 'earning-qps', label: 'QPs' },
+    { view: 'prelims', label: 'Prelims' },
+    { view: 'quals', label: 'Quals' },
+    { view: 'showcase', label: 'Showcase' },
   ];
   const formatTabs = s.showcaseFormats.map(f => ({
     view: 'format-' + f.toLowerCase(),
     label: f,
     format: f,
   }));
-  const tailTabs = [
-    { view: 'season', label: 'Season Info' },
-  ];
-  const allTabs = [...coreTabs, ...formatTabs, ...tailTabs];
+  const allTabs = [...coreTabs, ...formatTabs];
 
   // If activeView is a format tab that no longer exists, reset
   if (activeView.startsWith('format-') && !allTabs.find(t => t.view === activeView)) {
     activeView = 'overview';
   }
 
-  nav.innerHTML = allTabs.map(t =>
+  const coreHTML = coreTabs.map(t =>
     `<button class="tab${t.view === activeView ? ' active' : ''}" data-view="${t.view}">${t.label}</button>`
   ).join('');
+
+  const formatHTML = formatTabs.map(t => {
+    const color = FORMAT_COLORS[t.format] || '#6b7280';
+    return `<button class="tab tab-format${t.view === activeView ? ' active' : ''}" data-view="${t.view}"><span class="fmt-dot" style="background:${color}"></span>${t.label}</button>`;
+  }).join('');
+
+  const seasonTab = `<button class="tab${activeView === 'season' ? ' active' : ''}" data-view="season">Season</button>`;
+
+  nav.innerHTML = coreHTML + '<span class="tab-divider"></span>' + formatHTML + '<span class="tab-divider"></span>' + seasonTab;
 
   nav.querySelectorAll('.tab').forEach(btn => {
     btn.addEventListener('click', () => {
